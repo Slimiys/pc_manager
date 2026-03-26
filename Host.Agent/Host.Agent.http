@@ -1,0 +1,6 @@
+@Host.Agent_HostAddress = http://localhost:5170
+
+GET {{Host.Agent_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

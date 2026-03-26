@@ -1,0 +1,55 @@
+---
+description: Core project standards for architecture, testing, security, and documentation
+alwaysApply: true
+---
+
+# PcManager Project Standards
+
+## Architecture
+- Follow SOLID in all layers and components.
+- Keep classes focused (SRP) and depend on abstractions (DIP).
+- Prefer extension over modification (OCP) through handlers/strategies.
+
+## Development process
+- Use TDD cycle: Red -> Green -> Refactor.
+- Use NUnit for all tests (unit and integration).
+- Do not merge features without tests for core behavior.
+
+## Engineering principles
+- Apply KISS: prefer the simplest correct implementation.
+- Apply DRY: remove duplication when repetition is stable and meaningful.
+- Apply YAGNI: do not implement speculative features.
+
+## C# coding conventions
+- Public classes and public methods must include XML documentation in Russian.
+- Code comments should be in Russian and only where they add value.
+- Follow C# naming rules from ktaranov naming convention:
+  - PascalCase for namespaces, classes, methods, properties, enums.
+  - camelCase for parameters and local variables.
+  - Prefix interfaces with `I`.
+  - Private fields can use `_camelCase`.
+  - Avoid abbreviations unless common (`Id`, `Uri`, `Xml`).
+  - Do not use Hungarian notation.
+  - Keep enum names singular (except `[Flags]` enums).
+
+## Security and privacy
+- Never commit secrets, tokens, passwords, private keys, or PII.
+- Use environment variables or secret storage for sensitive values.
+- Sanitize logs: never print raw tokens or sensitive payloads.
+
+## Documentation structure
+- Keep root `README.md` as a documentation index and quick start.
+- Store detailed documentation in `docs/`.
+
+## Versions policy
+- Use latest stable .NET and package versions.
+- Avoid preview packages in production unless explicitly approved.
+
+## Commit conventions
+- Use Conventional Commits types only: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`.
+- Commit message language: concise English.
+- Follow ktaranov git comment structure:
+  - Subject line first, capitalized, without trailing period, target 50 chars (max 80).
+  - Empty line between subject and body.
+  - Body explains what changed and why (not only how).
+- Optional flags when applicable: `!!!` (breaking), `DB` (database changes), `WIP` (work in progress; never merge).

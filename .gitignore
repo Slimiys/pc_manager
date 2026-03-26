@@ -1,0 +1,24 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# User/IDE files
+.vs/
+.idea/
+*.user
+*.suo
+
+# Secrets and local config
+.env
+.env.*
+secrets/
+appsettings.*.local.json
+
+# Logs and temp
+*.log
+logs/
+*.tmp
+
+# OS artifacts
+Thumbs.db
+.DS_Store

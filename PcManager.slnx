@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Client.Avalonia/">
+    <Project Path="Client.Avalonia/Client.Avalonia.Android/Client.Avalonia.Android.csproj" />
+    <Project Path="Client.Avalonia/Client.Avalonia.Desktop/Client.Avalonia.Desktop.csproj" />
+    <Project Path="Client.Avalonia/Client.Avalonia/Client.Avalonia.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Server.Api.IntegrationTests/Server.Api.IntegrationTests.csproj" />
+    <Project Path="tests/Server.Application.Tests/Server.Application.Tests.csproj" />
+    <Project Path="tests/Server.Domain.Tests/Server.Domain.Tests.csproj" />
+  </Folder>
+  <Project Path="Host.Agent/Host.Agent.csproj" />
+  <Project Path="Server.Api/Server.Api.csproj" />
+  <Project Path="Server.Application/Server.Application.csproj" />
+  <Project Path="Server.Domain/Server.Domain.csproj" />
+  <Project Path="Server.Infrastructure/Server.Infrastructure.csproj" />
+</Solution>
