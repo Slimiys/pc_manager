@@ -25,4 +25,3 @@
 - [Безопасность](docs/security.md)
 - [Деплой](docs/deployment.md)
 - [Тестирование (TDD + NUnit)](docs/testing.md)
-- [Приватность данных](docs/privacy.md)

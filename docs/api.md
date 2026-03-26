@@ -2,7 +2,7 @@
 
 ## Auth
 - `POST /api/auth/token?role=Operator|Admin`
-  - Возвращает JWT токен для тестовой среды.
+  - Возвращает JWT токен.
 
 ## Commands
 - `POST /api/commands/execute`
