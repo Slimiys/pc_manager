@@ -6,7 +6,12 @@
         xmlns:views="clr-namespace:Client.Avalonia.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Client.Avalonia.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Client.Avalonia">
+        Width="640"
+        Height="520"
+        MinWidth="520"
+        MinHeight="460"
+        Title="{Localization CommonStrings.AppTitle}">
         <views:MainView />
 </Window>

@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Client.Avalonia.ViewModels"
+             x:Class="Client.Avalonia.Controls.Uptime.UptimeActionPanel"
+             x:DataType="vm:UptimeActionPanelViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="400"
+             d:DesignHeight="80">
+  <StackPanel Spacing="10">
+    <Button Classes="primary-action"
+            Command="{Binding GetUptimeCommand}"
+            Content="{Localization CommandStrings.ButtonGetUptime}" />
+    <Button Classes="primary-action"
+            Command="{Binding LockWorkstationCommand}"
+            Content="{Localization CommandStrings.ButtonLockWorkstation}" />
+    <TextBlock Classes="caption"
+               Text="{Localization KeyBinding={Binding StatusKey}, ArgsBinding={Binding StatusArgs}}" />
+  </StackPanel>
+</UserControl>

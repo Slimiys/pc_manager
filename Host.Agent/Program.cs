@@ -1,12 +1,33 @@
 using Server.Application.Contracts;
 using Server.Domain.Commands;
 using Server.Infrastructure.Execution;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+AppDomain.CurrentDomain.UnhandledException += (_, eventArgs) =>
+{
+    if (eventArgs.ExceptionObject is Exception exception)
+    {
+        Log.Fatal(exception, "Unhandled domain exception in Host.Agent.");
+    }
+};
+
+TaskScheduler.UnobservedTaskException += (_, eventArgs) =>
+{
+    Log.Error(eventArgs.Exception, "Unobserved task exception in Host.Agent.");
+    eventArgs.SetObserved();
+};
 
 var builder = WebApplication.CreateBuilder(args);
 if (TryGetPort(args, out var agentPort))
 {
     builder.WebHost.UseUrls($"http://0.0.0.0:{agentPort}");
 }
+builder.Host.UseSerilog();
 
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IWorkstationLocker, WindowsWorkstationLocker>();
@@ -19,6 +40,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
 
 app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto dto, IWorkstationLocker workstationLocker) =>
 {
@@ -45,6 +67,7 @@ app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto d
 });
 
 app.Run();
+Log.CloseAndFlush();
 
 static string LockWorkstationAndReturnResult(IWorkstationLocker workstationLocker)
 {

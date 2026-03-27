@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Client.Avalonia.ViewModels"
+             x:Class="Client.Avalonia.Controls.History.RequestHistoryPanel"
+             x:DataType="vm:RequestHistoryPanelViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="400"
+             d:DesignHeight="160">
+  <StackPanel Spacing="6">
+    <TextBlock Classes="caption"
+               Text="{Localization HistoryStrings.LabelRecentRequests}" />
+    <ItemsControl ItemsSource="{Binding HistoryItems}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Classes="body" Text="{Binding}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

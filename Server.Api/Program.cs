@@ -2,14 +2,35 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Server.Application.DependencyInjection;
 using Server.Infrastructure.DependencyInjection;
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+AppDomain.CurrentDomain.UnhandledException += (_, eventArgs) =>
+{
+    if (eventArgs.ExceptionObject is Exception exception)
+    {
+        Log.Fatal(exception, "Unhandled domain exception in Server.Api.");
+    }
+};
+
+TaskScheduler.UnobservedTaskException += (_, eventArgs) =>
+{
+    Log.Error(eventArgs.Exception, "Unobserved task exception in Server.Api.");
+    eventArgs.SetObserved();
+};
 
 var builder = WebApplication.CreateBuilder(args);
 if (TryGetPort(args, out var serverPort))
 {
     builder.WebHost.UseUrls($"http://0.0.0.0:{serverPort}");
 }
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
@@ -57,11 +78,13 @@ app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSerilogRequestLogging();
 
 app.MapControllers().RequireRateLimiting("api");
 app.MapHub<Server.Api.Hubs.CommandEventsHub>("/hubs/events");
 
 app.Run();
+Log.CloseAndFlush();
 
 static bool TryGetPort(string[] args, out int port)
 {

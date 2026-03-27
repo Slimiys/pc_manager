@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ButtonGetUptime" xml:space="preserve">
+    <value>Get uptime</value>
+  </data>
+  <data name="ButtonLockWorkstation" xml:space="preserve">
+    <value>Lock workstation</value>
+  </data>
+  <data name="LabelCurrentUptimeResult" xml:space="preserve">
+    <value>Current uptime result</value>
+  </data>
+  <data name="CommandDisplay_GetUptime" xml:space="preserve">
+    <value>GetUptime</value>
+  </data>
+  <data name="CommandDisplay_LockWorkstation" xml:space="preserve">
+    <value>LockWorkstation</value>
+  </data>
+</root>

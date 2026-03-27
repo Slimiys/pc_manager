@@ -1,0 +1,12 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="Button.primary-action">
+    <Setter Property="Background" Value="{StaticResource BrushAccent}" />
+    <Setter Property="Foreground" Value="{StaticResource BrushBackground}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BrushPrimary}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+</Styles>
