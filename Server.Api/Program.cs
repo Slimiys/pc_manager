@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Server.Api.Services;
 using Server.Application.DependencyInjection;
 using Server.Infrastructure.DependencyInjection;
 
@@ -38,6 +39,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddSingleton<NotificationInMemoryStore>();
+builder.Services.AddHostedService<LanDiscoveryHostedService>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -64,6 +67,22 @@ builder.Services
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(1)
         };
+
+        // Токен в query access_token нужен для некоторых транспортов SignalR (браузер и прокси).
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddAuthorization();
 
@@ -76,12 +95,38 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRateLimiter();
+
+// Webhook inbound проверяет только X-Notification-Key. Если в клиенте (Apidog) глобально включён
+// Bearer с просроченным/пустым токеном, JWT middleware вернёт 401 до контроллера — убираем Authorization.
+app.Use(async (context, next) =>
+{
+    if (HttpMethods.IsPost(context.Request.Method)
+        && context.Request.Path.StartsWithSegments("/api/notifications/inbound"))
+    {
+        context.Request.Headers.Remove("Authorization");
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSerilogRequestLogging();
 
 app.MapControllers().RequireRateLimiting("api");
 app.MapHub<Server.Api.Hubs.CommandEventsHub>("/hubs/events");
+
+var inboundNotificationKey = app.Configuration["Notifications:InboundApiKey"];
+if (string.IsNullOrWhiteSpace(inboundNotificationKey))
+{
+    Log.Warning("Notifications:InboundApiKey не задан — POST /api/notifications/inbound вернёт 503.");
+}
+else
+{
+    Log.Information(
+        "Входящие HTTP-оповещения: для Apidog/webhook используйте заголовок X-Notification-Key: {InboundApiKey}",
+        inboundNotificationKey);
+}
 
 app.Run();
 Log.CloseAndFlush();

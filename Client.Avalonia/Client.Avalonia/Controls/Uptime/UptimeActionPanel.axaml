@@ -15,6 +15,13 @@
     <Button Classes="primary-action"
             Command="{Binding LockWorkstationCommand}"
             Content="{Localization CommandStrings.ButtonLockWorkstation}" />
+    <Button Classes="primary-action"
+            Command="{Binding SendTestNotificationCommand}"
+            Content="{Localization CommandStrings.ButtonSendTestNotification}" />
+    <TextBlock Classes="caption"
+               Text="{Localization CommonStrings.LabelAgentAvailability}" />
+    <TextBlock Classes="caption"
+               Text="{Localization KeyBinding={Binding AgentAvailabilityKey}}" />
     <TextBlock Classes="caption"
                Text="{Localization KeyBinding={Binding StatusKey}, ArgsBinding={Binding StatusArgs}}" />
   </StackPanel>

@@ -72,6 +72,27 @@ public sealed class CommandsApiClient
         return ExecuteCommandAsync(token, "LockWorkstation", cancellationToken);
     }
 
+    /// <summary>
+    /// Проверяет доступность агента по endpoint системной информации.
+    /// </summary>
+    /// <param name="token">JWT токен.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>True, если агент доступен и отвечает.</returns>
+    public async Task<bool> IsAgentAvailableAsync(string token, CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "api/system/info");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private sealed record ExecuteRequestDto(string Type, string? Payload);
 
     private sealed record ExecuteResponseDto(JsonElement? Status, string? Result, string? Error);

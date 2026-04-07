@@ -27,4 +27,10 @@
   <data name="CommandDisplay_LockWorkstation" xml:space="preserve">
     <value>Блокировка ПК</value>
   </data>
+  <data name="ButtonSendTestNotification" xml:space="preserve">
+    <value>Тест оповещения агента</value>
+  </data>
+  <data name="CommandDisplay_SendTestNotification" xml:space="preserve">
+    <value>Тест оповещения агента</value>
+  </data>
 </root>

@@ -1,4 +1,4 @@
-using System.Reactive;
+﻿using System.Reactive;
 using Client.Avalonia.Localization;
 using ReactiveUI;
 
@@ -9,11 +9,13 @@ namespace Client.Avalonia.ViewModels;
 /// </summary>
 public sealed class UptimeActionPanelViewModel : ViewModelBase
 {
-    private string _statusKey = UiStringKeys.StatusReady;
+    private string _statusKey = UiStringKeys.Common.StatusReady;
     private object?[]? _statusArgs;
     private bool _isBusy;
+    private string _agentAvailabilityKey = UiStringKeys.Common.AgentAvailabilityChecking;
     private ReactiveCommand<Unit, Unit>? _getUptimeCommand;
     private ReactiveCommand<Unit, Unit>? _lockWorkstationCommand;
+    private ReactiveCommand<Unit, Unit>? _sendTestNotificationCommand;
 
     /// <summary>
     /// Создаёт панель действий.
@@ -50,6 +52,15 @@ public sealed class UptimeActionPanelViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Ключ статуса доступности агента.
+    /// </summary>
+    public string AgentAvailabilityKey
+    {
+        get => _agentAvailabilityKey;
+        set => this.RaiseAndSetIfChanged(ref _agentAvailabilityKey, value);
+    }
+
+    /// <summary>
     /// Команда выполнения GetUptime.
     /// </summary>
     public ReactiveCommand<Unit, Unit>? GetUptimeCommand
@@ -66,4 +77,14 @@ public sealed class UptimeActionPanelViewModel : ViewModelBase
         get => _lockWorkstationCommand;
         set => this.RaiseAndSetIfChanged(ref _lockWorkstationCommand, value);
     }
+
+    /// <summary>
+    /// Команда отправки тестового оповещения.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit>? SendTestNotificationCommand
+    {
+        get => _sendTestNotificationCommand;
+        set => this.RaiseAndSetIfChanged(ref _sendTestNotificationCommand, value);
+    }
 }
+

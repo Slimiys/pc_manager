@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Reactive;
 using Avalonia.Threading;
 using Client.Avalonia.Localization;
@@ -10,14 +10,20 @@ namespace Client.Avalonia.ViewModels;
 /// <summary>
 /// Главная ViewModel экрана управления командами.
 /// </summary>
-public sealed class MainViewModel : ViewModelBase
+public sealed class MainViewModel : ViewModelBase, IDisposable
 {
+    private const string TestNotificationTitle = "PcManager Test Notification";
+    private const string TestNotificationMessage = "This is a fixed test notification sent from UI to agent.";
+
     private readonly AuthApiClient _authApiClient;
     private readonly CommandsApiClient _commandsApiClient;
+    private readonly NotificationsApiClient _notificationsApiClient;
     private readonly TokenCache _tokenCache;
     private readonly ILocalizationService _localization;
+    private readonly PollingNotificationSubscriber _notificationSubscriber;
+    private readonly AgentAvailabilityMonitor _agentAvailabilityMonitor;
 
-    private string _statusResourceKey = UiStringKeys.StatusReady;
+    private string _statusResourceKey = UiStringKeys.Common.StatusReady;
     private string? _processingCommandName;
     private LanguageRowViewModel _selectedLanguage;
 
@@ -27,11 +33,14 @@ public sealed class MainViewModel : ViewModelBase
     public MainViewModel(
         AuthApiClient authApiClient,
         CommandsApiClient commandsApiClient,
+        NotificationsApiClient notificationsApiClient,
         TokenCache tokenCache,
-        ILocalizationService localization)
+        ILocalizationService localization,
+        IToastService toastService)
     {
         _authApiClient = authApiClient;
         _commandsApiClient = commandsApiClient;
+        _notificationsApiClient = notificationsApiClient;
         _tokenCache = tokenCache;
         _localization = localization;
         _localization.CultureChanged += OnLocalizationCultureChanged;
@@ -40,10 +49,23 @@ public sealed class MainViewModel : ViewModelBase
         ResultPanel = new UptimeResultPanelViewModel(localization);
         HistoryPanel = new RequestHistoryPanelViewModel(localization);
 
+        _notificationSubscriber = new PollingNotificationSubscriber(
+            notificationsApiClient,
+            cancellationToken => EnsureTokenAsync(cancellationToken),
+            localization,
+            toastService,
+            entry => HistoryPanel.AddEntry(entry));
+        _notificationSubscriber.Start();
+        _agentAvailabilityMonitor = new AgentAvailabilityMonitor(
+            _commandsApiClient,
+            EnsureTokenAsync,
+            availabilityKey => UpdateUi(() => { ActionPanel.AgentAvailabilityKey = availabilityKey; }));
+        _agentAvailabilityMonitor.Start();
+
         LanguageRows =
         [
-            new LanguageRowViewModel(localization, new CultureInfo("en"), UiStringKeys.LanguageEnglish),
-            new LanguageRowViewModel(localization, new CultureInfo("ru"), UiStringKeys.LanguageRussian)
+            new LanguageRowViewModel(localization, new CultureInfo("en"), UiStringKeys.Common.LanguageEnglish),
+            new LanguageRowViewModel(localization, new CultureInfo("ru"), UiStringKeys.Common.LanguageRussian)
         ];
 
         _selectedLanguage = ResolveInitialLanguageRow();
@@ -54,11 +76,15 @@ public sealed class MainViewModel : ViewModelBase
         ExecuteLockWorkstationCommand = ReactiveCommand.CreateFromTask(
             execute: ExecuteLockWorkstationAsync,
             outputScheduler: RxApp.MainThreadScheduler);
+        ExecuteSendTestNotificationCommand = ReactiveCommand.CreateFromTask(
+            execute: ExecuteSendTestNotificationAsync,
+            outputScheduler: RxApp.MainThreadScheduler);
 
         ActionPanel.GetUptimeCommand = ExecuteGetUptimeCommand;
         ActionPanel.LockWorkstationCommand = ExecuteLockWorkstationCommand;
+        ActionPanel.SendTestNotificationCommand = ExecuteSendTestNotificationCommand;
 
-        ActionPanel.StatusKey = UiStringKeys.StatusReady;
+        ActionPanel.StatusKey = UiStringKeys.Common.StatusReady;
         ActionPanel.StatusArgs = null;
     }
 
@@ -71,6 +97,11 @@ public sealed class MainViewModel : ViewModelBase
     /// Команда выполнения LockWorkstation.
     /// </summary>
     public ReactiveCommand<Unit, Unit> ExecuteLockWorkstationCommand { get; }
+
+    /// <summary>
+    /// Команда отправки тестового оповещения агенту.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> ExecuteSendTestNotificationCommand { get; }
 
     /// <summary>
     /// Панель действия.
@@ -133,9 +164,10 @@ public sealed class MainViewModel : ViewModelBase
             execute: token => _commandsApiClient.ExecuteLockWorkstationAsync(token, CancellationToken.None));
     }
 
-    private async Task ExecuteCommandWithUiFlowAsync(string commandName, Func<string, Task<string>> execute)
+    private async Task ExecuteSendTestNotificationAsync()
     {
-        _statusResourceKey = UiStringKeys.StatusProcessing;
+        var commandName = "SendTestNotification";
+        _statusResourceKey = UiStringKeys.Common.StatusProcessing;
         _processingCommandName = commandName;
 
         UpdateUi(() =>
@@ -150,28 +182,31 @@ public sealed class MainViewModel : ViewModelBase
 
         try
         {
-            var tokenValue = await EnsureTokenAsync();
-            var result = await execute(tokenValue);
-            _statusResourceKey = UiStringKeys.StatusSuccess;
+            await _notificationsApiClient.SendInboundAsync(
+                TestNotificationTitle,
+                TestNotificationMessage,
+                CancellationToken.None);
+
+            _statusResourceKey = UiStringKeys.Common.StatusSuccess;
             _processingCommandName = null;
 
             var displayName = _localization.GetString(GetCommandDisplayResourceKey(commandName));
             UpdateUi(() =>
             {
-                ResultPanel.UptimeResult = result;
                 ActionPanel.StatusKey = _statusResourceKey;
                 ActionPanel.StatusArgs = null;
+                ResultPanel.UptimeResult = $"{TestNotificationTitle} / {TestNotificationMessage}";
                 HistoryPanel.AddEntry(
                     _localization.GetString(
-                        UiStringKeys.HistoryEntryFormat,
+                        UiStringKeys.History.HistoryEntryFormat,
                         DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
                         displayName,
-                        result));
+                        "OK"));
             });
         }
         catch (Exception ex)
         {
-            _statusResourceKey = UiStringKeys.StatusFailed;
+            _statusResourceKey = UiStringKeys.Common.StatusFailed;
             _processingCommandName = null;
 
             var displayName = _localization.GetString(GetCommandDisplayResourceKey(commandName));
@@ -182,7 +217,7 @@ public sealed class MainViewModel : ViewModelBase
                 ResultPanel.UptimeResult = ex.Message;
                 HistoryPanel.AddEntry(
                     _localization.GetString(
-                        UiStringKeys.HistoryErrorFormat,
+                        UiStringKeys.History.HistoryErrorFormat,
                         DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
                         displayName,
                         ex.Message));
@@ -194,18 +229,79 @@ public sealed class MainViewModel : ViewModelBase
         }
     }
 
-    private async Task<string> EnsureTokenAsync()
+    private async Task ExecuteCommandWithUiFlowAsync(string commandName, Func<string, Task<string>> execute)
+    {
+        _statusResourceKey = UiStringKeys.Common.StatusProcessing;
+        _processingCommandName = commandName;
+
+        UpdateUi(() =>
+        {
+            ActionPanel.IsBusy = true;
+            ActionPanel.StatusKey = _statusResourceKey;
+            ActionPanel.StatusArgs =
+            [
+                _localization.GetString(GetCommandDisplayResourceKey(commandName))
+            ];
+        });
+
+        try
+        {
+            var tokenValue = await EnsureTokenAsync(CancellationToken.None);
+            var result = await execute(tokenValue);
+            _statusResourceKey = UiStringKeys.Common.StatusSuccess;
+            _processingCommandName = null;
+
+            var displayName = _localization.GetString(GetCommandDisplayResourceKey(commandName));
+            UpdateUi(() =>
+            {
+                ResultPanel.UptimeResult = result;
+                ActionPanel.StatusKey = _statusResourceKey;
+                ActionPanel.StatusArgs = null;
+                HistoryPanel.AddEntry(
+                    _localization.GetString(
+                        UiStringKeys.History.HistoryEntryFormat,
+                        DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
+                        displayName,
+                        result));
+            });
+        }
+        catch (Exception ex)
+        {
+            _statusResourceKey = UiStringKeys.Common.StatusFailed;
+            _processingCommandName = null;
+
+            var displayName = _localization.GetString(GetCommandDisplayResourceKey(commandName));
+            UpdateUi(() =>
+            {
+                ActionPanel.StatusKey = _statusResourceKey;
+                ActionPanel.StatusArgs = null;
+                ResultPanel.UptimeResult = ex.Message;
+                HistoryPanel.AddEntry(
+                    _localization.GetString(
+                        UiStringKeys.History.HistoryErrorFormat,
+                        DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
+                        displayName,
+                        ex.Message));
+            });
+        }
+        finally
+        {
+            UpdateUi(() => { ActionPanel.IsBusy = false; });
+        }
+    }
+
+    private async Task<string> EnsureTokenAsync(CancellationToken cancellationToken)
     {
         if (!_tokenCache.HasToken)
         {
-            var token = await _authApiClient.GetTokenAsync(CancellationToken.None);
+            var token = await _authApiClient.GetTokenAsync(cancellationToken);
             _tokenCache.SetToken(token);
         }
 
         var tokenValue = _tokenCache.GetToken();
         if (string.IsNullOrWhiteSpace(tokenValue))
         {
-            throw new InvalidOperationException(_localization.GetString(UiStringKeys.ErrorTokenMissing));
+            throw new InvalidOperationException(_localization.GetString(UiStringKeys.Common.ErrorTokenMissing));
         }
 
         return tokenValue;
@@ -214,7 +310,7 @@ public sealed class MainViewModel : ViewModelBase
     private void OnLocalizationCultureChanged(object? sender, EventArgs e)
     {
         SyncSelectedLanguageFromService();
-        if (!string.Equals(_statusResourceKey, UiStringKeys.StatusProcessing, StringComparison.Ordinal)
+        if (!string.Equals(_statusResourceKey, UiStringKeys.Common.StatusProcessing, StringComparison.Ordinal)
             || string.IsNullOrWhiteSpace(_processingCommandName))
         {
             return;
@@ -256,8 +352,9 @@ public sealed class MainViewModel : ViewModelBase
     {
         return commandName switch
         {
-            "GetUptime" => UiStringKeys.CommandDisplay_GetUptime,
-            "LockWorkstation" => UiStringKeys.CommandDisplay_LockWorkstation,
+            "GetUptime" => UiStringKeys.Command.CommandDisplay_GetUptime,
+            "LockWorkstation" => UiStringKeys.Command.CommandDisplay_LockWorkstation,
+            "SendTestNotification" => UiStringKeys.Command.CommandDisplay_SendTestNotification,
             _ => commandName
         };
     }
@@ -266,4 +363,14 @@ public sealed class MainViewModel : ViewModelBase
     {
         Dispatcher.UIThread.Post(updateAction);
     }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        _agentAvailabilityMonitor.Dispose();
+        _localization.CultureChanged -= OnLocalizationCultureChanged;
+        _notificationSubscriber.Dispose();
+        HistoryPanel.Dispose();
+    }
 }
+

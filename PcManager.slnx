@@ -4,6 +4,10 @@
     <Project Path="Client.Avalonia/Client.Avalonia.Desktop/Client.Avalonia.Desktop.csproj" />
     <Project Path="Client.Avalonia/Client.Avalonia/Client.Avalonia.csproj" />
   </Folder>
+  <Folder Name="/Client.ToastListener/">
+    <Project Path="Client.ToastListener/Client.ToastListener.Desktop/Client.ToastListener.Desktop.csproj" />
+    <Project Path="Client.ToastListener/Client.ToastListener/Client.ToastListener.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Server.Api.IntegrationTests/Server.Api.IntegrationTests.csproj" />
     <Project Path="tests/Server.Application.Tests/Server.Application.Tests.csproj" />

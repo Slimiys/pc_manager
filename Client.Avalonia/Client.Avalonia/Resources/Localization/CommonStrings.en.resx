@@ -42,4 +42,16 @@
   <data name="ErrorTokenMissing" xml:space="preserve">
     <value>Token is missing.</value>
   </data>
+  <data name="LabelAgentAvailability" xml:space="preserve">
+    <value>Agent availability</value>
+  </data>
+  <data name="AgentAvailabilityChecking" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="AgentAvailabilityOnline" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="AgentAvailabilityOffline" xml:space="preserve">
+    <value>Offline</value>
+  </data>
 </root>

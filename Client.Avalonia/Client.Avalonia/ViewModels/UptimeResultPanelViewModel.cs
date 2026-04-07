@@ -1,4 +1,4 @@
-using Client.Avalonia.Localization;
+﻿using Client.Avalonia.Localization;
 using ReactiveUI;
 
 namespace Client.Avalonia.ViewModels;
@@ -37,12 +37,12 @@ public sealed class UptimeResultPanelViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Текст для отображения: результат или локализованный заполнитель «нет данных».
     /// </summary>
-    public string ResultDisplay => UptimeResult ?? _localization.GetString(UiStringKeys.PlaceholderNoData);
+    public string ResultDisplay => UptimeResult ?? _localization.GetString(UiStringKeys.Common.PlaceholderNoData);
 
     /// <summary>
     /// Заголовок секции результата.
     /// </summary>
-    public string SectionTitle => _localization.GetString(UiStringKeys.LabelCurrentUptimeResult);
+    public string SectionTitle => _localization.GetString(UiStringKeys.Command.LabelCurrentUptimeResult);
 
     /// <inheritdoc />
     public void Dispose()
@@ -56,3 +56,4 @@ public sealed class UptimeResultPanelViewModel : ViewModelBase, IDisposable
         this.RaisePropertyChanged(nameof(SectionTitle));
     }
 }
+

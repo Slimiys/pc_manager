@@ -42,4 +42,16 @@
   <data name="ErrorTokenMissing" xml:space="preserve">
     <value>Токен отсутствует.</value>
   </data>
+  <data name="LabelAgentAvailability" xml:space="preserve">
+    <value>Доступность агента</value>
+  </data>
+  <data name="AgentAvailabilityChecking" xml:space="preserve">
+    <value>Проверка...</value>
+  </data>
+  <data name="AgentAvailabilityOnline" xml:space="preserve">
+    <value>Доступен</value>
+  </data>
+  <data name="AgentAvailabilityOffline" xml:space="preserve">
+    <value>Недоступен</value>
+  </data>
 </root>

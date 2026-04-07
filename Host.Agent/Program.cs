@@ -1,4 +1,3 @@
-using Server.Application.Contracts;
 using Server.Domain.Commands;
 using Server.Infrastructure.Execution;
 using Serilog;
@@ -30,7 +29,7 @@ if (TryGetPort(args, out var agentPort))
 builder.Host.UseSerilog();
 
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton<IWorkstationLocker, WindowsWorkstationLocker>();
+builder.Services.AddSingleton<Server.Application.Contracts.IWorkstationLocker, WindowsWorkstationLocker>();
 
 var app = builder.Build();
 
@@ -42,7 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
-app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto dto, IWorkstationLocker workstationLocker) =>
+app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto dto, Server.Application.Contracts.IWorkstationLocker workstationLocker) =>
 {
     var expectedApiKey = app.Configuration["Agent:ApiKey"] ?? "CHANGE_ME_AGENT_KEY";
     if (!request.Headers.TryGetValue("X-Agent-Key", out var apiKey) || apiKey != expectedApiKey)
@@ -69,7 +68,7 @@ app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto d
 app.Run();
 Log.CloseAndFlush();
 
-static string LockWorkstationAndReturnResult(IWorkstationLocker workstationLocker)
+static string LockWorkstationAndReturnResult(Server.Application.Contracts.IWorkstationLocker workstationLocker)
 {
     workstationLocker.Lock();
     return "Workstation lock requested successfully.";

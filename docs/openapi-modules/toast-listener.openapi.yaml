@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: PcManager — Toast Listener
+  description: |
+    Модуль **Toast**: HTTP-слушатель Client.ToastListener.Desktop (Kestrel + Avalonia).
+
+    Импорт в Apidog: отдельный модуль **Toast**, Base URL `http://127.0.0.1:8787`
+    (порт из `ToastListener:HttpPort`). Заголовок X-Toast-Listener-Key = `ToastListener:ApiKey`
+    и должен совпадать с `Notifications:ToastListenerKey` на Server.Api.
+  version: 1.0.0
+
+servers:
+  - url: "{baseUrl}"
+    description: Toast Listener
+    variables:
+      baseUrl:
+        default: http://127.0.0.1:8787
+
+tags:
+  - name: Toast
+    description: Показ уведомления на рабочем столе
+
+paths:
+  /api/toast/show:
+    post:
+      tags: [Toast]
+      summary: Показать toast
+      operationId: toastShow
+      security:
+        - toastListenerKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToastShowDto"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request (нет title)
+        "401":
+          description: Unauthorized (неверный ключ)
+
+components:
+  securitySchemes:
+    toastListenerKey:
+      type: apiKey
+      in: header
+      name: X-Toast-Listener-Key
+
+  schemas:
+    ToastShowDto:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+          nullable: true

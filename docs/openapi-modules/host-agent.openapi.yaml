@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: PcManager — Host.Agent
+  description: |
+    Модуль **Agent**: HTTP API процесса Host.Agent на управляемом ПК.
+
+    Импорт в Apidog: отдельный модуль **Agent**, Base URL `http://127.0.0.1:8090`
+    (см. `scripts/start-agent.ps1`). Заголовок X-Agent-Key = `Agent:ApiKey` на агенте.
+  version: 1.0.0
+
+servers:
+  - url: "{baseUrl}"
+    description: Host.Agent
+    variables:
+      baseUrl:
+        default: http://127.0.0.1:8090
+
+tags:
+  - name: Agent
+    description: Выполнение команд на хосте
+
+paths:
+  /api/agent/execute:
+    post:
+      tags: [Agent]
+      summary: Выполнить команду на машине агента
+      operationId: agentExecute
+      security:
+        - agentKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecuteAgentCommandDto"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecuteAgentCommandResultDto"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    agentKey:
+      type: apiKey
+      in: header
+      name: X-Agent-Key
+
+  schemas:
+    ExecuteAgentCommandDto:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [LockWorkstation, GetUptime]
+        payload:
+          type: string
+          nullable: true
+
+    ExecuteAgentCommandResultDto:
+      type: object
+      properties:
+        result:
+          type: string

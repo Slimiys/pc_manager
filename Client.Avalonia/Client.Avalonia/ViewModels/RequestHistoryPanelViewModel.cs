@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Client.Avalonia.Localization;
 using DynamicData;
 using DynamicData.Binding;
@@ -38,7 +38,7 @@ public sealed class RequestHistoryPanelViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Заголовок секции истории.
     /// </summary>
-    public string SectionTitle => _localization.GetString(UiStringKeys.LabelRecentRequests);
+    public string SectionTitle => _localization.GetString(UiStringKeys.History.LabelRecentRequests);
 
     /// <summary>
     /// Добавляет запись в историю.
@@ -62,3 +62,4 @@ public sealed class RequestHistoryPanelViewModel : ViewModelBase, IDisposable
         this.RaisePropertyChanged(nameof(SectionTitle));
     }
 }
+

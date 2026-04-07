@@ -27,4 +27,10 @@
   <data name="CommandDisplay_LockWorkstation" xml:space="preserve">
     <value>LockWorkstation</value>
   </data>
+  <data name="ButtonSendTestNotification" xml:space="preserve">
+    <value>Send test notification</value>
+  </data>
+  <data name="CommandDisplay_SendTestNotification" xml:space="preserve">
+    <value>SendTestNotification</value>
+  </data>
 </root>

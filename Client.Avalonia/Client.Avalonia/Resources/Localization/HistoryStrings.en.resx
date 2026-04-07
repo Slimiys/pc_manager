@@ -21,4 +21,7 @@
   <data name="HistoryErrorFormat" xml:space="preserve">
     <value>{0} | ERROR ({1}): {2}</value>
   </data>
+  <data name="HistoryNotificationFormat" xml:space="preserve">
+    <value>{0} | Notification: {1}</value>
+  </data>
 </root>

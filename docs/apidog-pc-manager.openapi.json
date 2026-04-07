@@ -1,0 +1,404 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PcManager API",
+    "description": "PcManager: Server.Api and Host.Agent.\n\n**Apidog:** если в ответе текст про «Environmental Management» и `dev.your-api-server.com` — это не ваш сервер. Откройте «Управление окружениями» (Environmental Management) справа сверху, выберите окружение и задайте **Base URL** = `http://127.0.0.1:8080` (порт Server.Api) или `http://127.0.0.1:8090` для Host.Agent. Убедитесь, что выбрано это окружение перед отправкой запроса.\n\nCommandExecutionResponseDto: type и status — числа в JSON (CommandType 1-2, CommandStatus 1-4).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "{baseUrl}",
+      "description": "Корневой URL (в Apidog обычно подставляется как {{baseUrl}} из окружения). По умолчанию Server.Api.",
+      "variables": {
+        "baseUrl": {
+          "default": "http://127.0.0.1:8080",
+          "description": "Для Host.Agent переключите на http://127.0.0.1:8090"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Server / Auth",
+      "description": "JWT for Server.Api"
+    },
+    {
+      "name": "Server / Commands",
+      "description": "Commands via Server.Api"
+    },
+    {
+      "name": "Server / Notifications",
+      "description": "Inbound webhook and polling"
+    },
+    {
+      "name": "Server / System",
+      "description": "Server process system info"
+    },
+    {
+      "name": "Agent",
+      "description": "Host.Agent — use base URL http://127.0.0.1:8090 (see scripts/start-agent.ps1)"
+    }
+  ],
+  "paths": {
+    "/api/auth/token": {
+      "post": {
+        "tags": ["Server / Auth"],
+        "summary": "Get JWT",
+        "operationId": "authIssueToken",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Operator",
+              "enum": ["Operator", "Admin"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JWT string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/commands/execute": {
+      "post": {
+        "tags": ["Server / Commands"],
+        "summary": "Execute command",
+        "operationId": "commandsExecute",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteCommandRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandExecutionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/commands/{id}": {
+      "get": {
+        "tags": ["Server / Commands"],
+        "summary": "Get command status",
+        "operationId": "commandsGetStatus",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandExecutionResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/notifications/inbound": {
+      "post": {
+        "tags": ["Server / Notifications"],
+        "summary": "Inbound notification (webhook)",
+        "operationId": "notificationsInbound",
+        "security": [{ "notificationKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InboundNotificationRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "503": {
+            "description": "InboundApiKey not configured"
+          }
+        }
+      }
+    },
+    "/api/notifications/recent": {
+      "get": {
+        "tags": ["Server / Notifications"],
+        "summary": "Notifications after sinceUtc",
+        "operationId": "notificationsRecent",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "sinceUtc",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationBroadcastDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/system/info": {
+      "get": {
+        "tags": ["Server / System"],
+        "summary": "System info",
+        "operationId": "systemInfo",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/agent/execute": {
+      "post": {
+        "tags": ["Agent"],
+        "summary": "Execute command on agent host",
+        "description": "Use environment base URL http://127.0.0.1:8090 (not 8080). Header X-Agent-Key = Agent:ApiKey.",
+        "operationId": "agentExecute",
+        "security": [{ "agentKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteAgentCommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteAgentCommandResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "notificationKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Notification-Key"
+      },
+      "agentKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Agent-Key"
+      }
+    },
+    "schemas": {
+      "ExecuteCommandRequestDto": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["LockWorkstation", "GetUptime"]
+          },
+          "payload": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CommandExecutionResponseDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "integer",
+            "enum": [1, 2]
+          },
+          "status": {
+            "type": "integer",
+            "enum": [1, 2, 3, 4]
+          },
+          "result": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InboundNotificationRequestDto": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NotificationBroadcastDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "receivedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SystemInfoDto": {
+        "type": "object",
+        "properties": {
+          "machineName": {
+            "type": "string"
+          },
+          "osDescription": {
+            "type": "string"
+          },
+          "framework": {
+            "type": "string"
+          },
+          "utcNow": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ExecuteAgentCommandDto": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["LockWorkstation", "GetUptime"]
+          },
+          "payload": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ExecuteAgentCommandResultDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

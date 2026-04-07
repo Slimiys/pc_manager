@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Client.ToastListener.MainWindow"
+        Width="520" MinHeight="160"
+        WindowStartupLocation="CenterScreen">
+  <StackPanel Margin="16" Spacing="8">
+    <TextBlock Text="Ожидание HTTP POST /api/toast/show от сервера…"
+               TextWrapping="Wrap" />
+    <TextBlock x:Name="KeyHintTextBlock"
+               TextWrapping="Wrap"
+               FontFamily="Consolas, Courier New, monospace"
+               FontSize="11" />
+  </StackPanel>
+</Window>

@@ -1,3 +1,5 @@
+# Только Server.Api. Host.Agent запускайте отдельно на управляемом ПК (dotnet run или служба),
+# не в этом compose — см. docs/deployment.md
 services:
   server-api:
     build:
@@ -7,21 +9,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       Jwt__Secret: CHANGE_ME_FOR_PRODUCTION_32+_CHARS_SECRET
+      # URL агента на хосте (Windows/Mac Docker Desktop). На Linux задайте IP хоста или Tailscale.
       Agent__BaseUrl: http://host.docker.internal:8090/
       Agent__ApiKey: CHANGE_ME_AGENT_KEY
     ports:
       - "8080:8080"
-    depends_on:
-      - host-agent
-
-  host-agent:
-    build:
-      context: .
-      dockerfile: Host.Agent/Dockerfile
-    container_name: pc-manager-host-agent
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://0.0.0.0:8090
-      Agent__ApiKey: CHANGE_ME_AGENT_KEY
-    ports:
-      - "8090:8090"

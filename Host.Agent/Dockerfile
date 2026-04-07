@@ -8,7 +8,7 @@ COPY ["Server.Infrastructure/Server.Infrastructure.csproj", "Server.Infrastructu
 RUN dotnet restore "Host.Agent/Host.Agent.csproj"
 
 COPY . .
-RUN dotnet publish "Host.Agent/Host.Agent.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Host.Agent/Host.Agent.csproj" -c Release -f net10.0 -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
