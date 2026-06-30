@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.SignalR;
-using Server.Api.Hubs;
 using Server.Api.Models;
 using Server.Api.Services;
-using Server.Application.Contracts;
 
 namespace Server.Api.Controllers;
 
@@ -20,9 +17,8 @@ public sealed class NotificationsController : ControllerBase
     private const int MaxMessageLength = 4000;
 
     private readonly IConfiguration _configuration;
-    private readonly IHubContext<CommandEventsHub> _hubContext;
+    private readonly INotificationBroadcaster _notificationBroadcaster;
     private readonly NotificationInMemoryStore _store;
-    private readonly IToastListenerForwarder _toastListenerForwarder;
     private readonly ILogger<NotificationsController> _logger;
 
     /// <summary>
@@ -30,15 +26,13 @@ public sealed class NotificationsController : ControllerBase
     /// </summary>
     public NotificationsController(
         IConfiguration configuration,
-        IHubContext<CommandEventsHub> hubContext,
+        INotificationBroadcaster notificationBroadcaster,
         NotificationInMemoryStore store,
-        IToastListenerForwarder toastListenerForwarder,
         ILogger<NotificationsController> logger)
     {
         _configuration = configuration;
-        _hubContext = hubContext;
+        _notificationBroadcaster = notificationBroadcaster;
         _store = store;
-        _toastListenerForwarder = toastListenerForwarder;
         _logger = logger;
     }
 
@@ -109,18 +103,7 @@ public sealed class NotificationsController : ControllerBase
             }
         }
 
-        var payload = new NotificationBroadcastDto(title, message, DateTimeOffset.UtcNow);
-        _store.Add(payload);
-        await _hubContext.Clients.All.SendAsync("NotificationReceived", payload, cancellationToken);
-
-        try
-        {
-            await _toastListenerForwarder.ForwardAsync(title, message, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Не удалось переслать оповещение на toast-слушатель (десктоп).");
-        }
+        await _notificationBroadcaster.BroadcastAsync(title, message, cancellationToken);
 
         return Ok();
     }

@@ -14,6 +14,8 @@ using Server.Infrastructure.Messaging;
 
 using Server.Infrastructure.Messaging.Kafka;
 
+using Server.Infrastructure.Redmine;
+
 using Server.Infrastructure.Storage;
 
 using Server.Infrastructure.System;
@@ -128,6 +130,15 @@ public static class ServiceCollectionExtensions
             services.AddSingleton<IEventPublisher, NoOpEventPublisher>();
 
         }
+
+
+
+        var redmineOptions = configuration.GetSection("Redmine").Get<Server.Application.Redmine.RedmineOptions>()
+            ?? new Server.Application.Redmine.RedmineOptions();
+        services.AddSingleton(redmineOptions);
+        services.AddSingleton<Server.Application.Redmine.RedmineIssueMonitor>();
+        services.AddHttpClient<RedmineApiClient>();
+        services.AddSingleton<IRedmineApiClient>(provider => provider.GetRequiredService<RedmineApiClient>());
 
 
 

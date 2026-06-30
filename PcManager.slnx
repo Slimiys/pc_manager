@@ -12,6 +12,7 @@
     <Project Path="tests/Server.Api.IntegrationTests/Server.Api.IntegrationTests.csproj" />
     <Project Path="tests/Server.Application.Tests/Server.Application.Tests.csproj" />
     <Project Path="tests/Server.Domain.Tests/Server.Domain.Tests.csproj" />
+    <Project Path="tests/Server.Infrastructure.Tests/Server.Infrastructure.Tests.csproj" />
   </Folder>
   <Project Path="Host.Agent/Host.Agent.csproj" />
   <Project Path="Server.Api/Server.Api.csproj" />

@@ -29,6 +29,8 @@ public sealed class LocalCommandExecutor : ICommandExecutor
             CommandType.GetUptime => Task.FromResult(
                 (DateTimeOffset.UtcNow - TimeSpan.FromMilliseconds(Environment.TickCount64)).ToString()),
             CommandType.LockWorkstation => Task.FromResult(LockWorkstation()),
+            CommandType.SetPowerPlanOffice or CommandType.SetPowerPlanGaming or CommandType.SetPowerPlanPerformance =>
+                Task.FromResult(ActivatePowerPlan(request.Type)),
             _ => throw new InvalidOperationException($"Unsupported command type: {request.Type}")
         };
     }
@@ -37,5 +39,15 @@ public sealed class LocalCommandExecutor : ICommandExecutor
     {
         _workstationLocker.Lock();
         return "Workstation lock requested successfully.";
+    }
+
+    private static string ActivatePowerPlan(CommandType type)
+    {
+        if (!PowerPlanGuids.TryGetForCommand(type, out var guid))
+        {
+            throw new InvalidOperationException($"Тип команды не относится к схеме питания: {type}");
+        }
+
+        return WindowsPowerPlanActivator.Activate(guid, cancellationToken: default);
     }
 }

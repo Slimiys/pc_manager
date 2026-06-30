@@ -18,6 +18,17 @@
     <Button Classes="primary-action"
             Command="{Binding SendTestNotificationCommand}"
             Content="{Localization CommandStrings.ButtonSendTestNotification}" />
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <Button Classes="primary-action"
+              Command="{Binding SetPowerPlanOfficeCommand}"
+              Content="{Localization CommandStrings.ButtonPowerPlanOffice}" />
+      <Button Classes="primary-action"
+              Command="{Binding SetPowerPlanGamingCommand}"
+              Content="{Localization CommandStrings.ButtonPowerPlanGaming}" />
+      <Button Classes="primary-action"
+              Command="{Binding SetPowerPlanPerformanceCommand}"
+              Content="{Localization CommandStrings.ButtonPowerPlanPerformance}" />
+    </StackPanel>
     <TextBlock Classes="caption"
                Text="{Localization CommonStrings.LabelAgentAvailability}" />
     <TextBlock Classes="caption"

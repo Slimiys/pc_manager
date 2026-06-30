@@ -7,4 +7,5 @@
   <Color x:Key="ColorMutedDark">#554D39</Color>
   <Color x:Key="ColorBackground">#33312B</Color>
   <Color x:Key="ColorForeground">#F2F2F2</Color>
+  <Color x:Key="ColorNewIssue">#FF9800</Color>
 </ResourceDictionary>

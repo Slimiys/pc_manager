@@ -9,5 +9,9 @@ namespace Server.Infrastructure.Allowlist;
 public sealed class DefaultCommandAllowlist : ICommandAllowlist
 {
     /// <inheritdoc />
-    public bool IsAllowed(CommandType type) => type is CommandType.LockWorkstation or CommandType.GetUptime;
+    public bool IsAllowed(CommandType type) => type is CommandType.LockWorkstation
+        or CommandType.GetUptime
+        or CommandType.SetPowerPlanOffice
+        or CommandType.SetPowerPlanGaming
+        or CommandType.SetPowerPlanPerformance;
 }

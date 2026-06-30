@@ -7,4 +7,5 @@
   <SolidColorBrush x:Key="BrushSecondary" Color="{StaticResource ColorBrandSecondary}" />
   <SolidColorBrush x:Key="BrushMutedDark" Color="{StaticResource ColorMutedDark}" />
   <SolidColorBrush x:Key="BrushBorder" Color="{StaticResource ColorMutedOlive}" />
+  <SolidColorBrush x:Key="BrushNewIssue" Color="{StaticResource ColorNewIssue}" />
 </ResourceDictionary>

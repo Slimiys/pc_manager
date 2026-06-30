@@ -33,4 +33,22 @@
   <data name="CommandDisplay_SendTestNotification" xml:space="preserve">
     <value>SendTestNotification</value>
   </data>
+  <data name="ButtonPowerPlanOffice" xml:space="preserve">
+    <value>Power: Office</value>
+  </data>
+  <data name="ButtonPowerPlanGaming" xml:space="preserve">
+    <value>Power: Gaming</value>
+  </data>
+  <data name="ButtonPowerPlanPerformance" xml:space="preserve">
+    <value>Power: Performance</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanOffice" xml:space="preserve">
+    <value>SetPowerPlanOffice</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanGaming" xml:space="preserve">
+    <value>SetPowerPlanGaming</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanPerformance" xml:space="preserve">
+    <value>SetPowerPlanPerformance</value>
+  </data>
 </root>

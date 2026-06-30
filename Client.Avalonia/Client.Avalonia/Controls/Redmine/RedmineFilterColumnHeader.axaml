@@ -1,0 +1,46 @@
+<Button xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Client.Avalonia.ViewModels"
+        xmlns:redmine="using:Client.Avalonia.Controls.Redmine"
+        x:Class="Client.Avalonia.Controls.Redmine.RedmineFilterColumnHeader"
+        x:DataType="redmine:RedmineFilterColumnHeader"
+        x:Name="Root"
+        Classes="redmine-filter-header"
+        Classes.filter-active="{Binding IsFilterActive, ElementName=Root}"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Left"
+        VerticalContentAlignment="Center"
+        Background="Transparent"
+        BorderThickness="0"
+        Padding="0"
+        MinHeight="36"
+        Cursor="Hand">
+  <StackPanel Orientation="Horizontal" Spacing="6">
+    <TextBlock Classes="header-label"
+               Text="{Binding Title, ElementName=Root}"
+               FontSize="14"
+               FontWeight="SemiBold"
+               TextWrapping="Wrap"
+               VerticalAlignment="Center" />
+    <TextBlock Text="▾"
+               FontSize="11"
+               Opacity="0.75"
+               VerticalAlignment="Center" />
+  </StackPanel>
+  <Button.Flyout>
+    <MenuFlyout Placement="BottomEdgeAlignedLeft"
+                Opening="OnFlyoutOpening">
+      <MenuFlyout.ItemsSource>
+        <Binding Path="Options" />
+      </MenuFlyout.ItemsSource>
+      <MenuFlyout.ItemTemplate>
+        <DataTemplate x:DataType="vm:RedmineIssueFilterOptionViewModel">
+          <MenuItem Header="{Binding DisplayLabel}"
+                    Command="{Binding FilterSelectCommand, ElementName=Root}"
+                    CommandParameter="{Binding Value}" />
+        </DataTemplate>
+      </MenuFlyout.ItemTemplate>
+    </MenuFlyout>
+  </Button.Flyout>
+</Button>

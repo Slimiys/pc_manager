@@ -3,13 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Client.Avalonia.ViewModels"
-             xmlns:uptimeControls="using:Client.Avalonia.Controls.Uptime"
-             xmlns:historyControls="using:Client.Avalonia.Controls.History"
+             xmlns:views="using:Client.Avalonia.Views"
+             xmlns:redmineControls="using:Client.Avalonia.Controls.Redmine"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Client.Avalonia.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Border Background="{StaticResource BrushBackground}" Padding="20">
-    <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="14">
+    <Grid RowDefinitions="Auto,*" RowSpacing="14">
       <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
         <TextBlock Grid.Column="0"
                    Classes="header"
@@ -32,9 +32,14 @@
           </ComboBox>
         </StackPanel>
       </Grid>
-      <uptimeControls:UptimeActionPanel Grid.Row="1" DataContext="{Binding ActionPanel}" />
-      <uptimeControls:UptimeResultPanel Grid.Row="2" DataContext="{Binding ResultPanel}" />
-      <historyControls:RequestHistoryPanel Grid.Row="3" DataContext="{Binding HistoryPanel}" />
+      <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}">
+        <TabItem Header="{Localization CommonStrings.TabPcManager}">
+          <views:PcManagerView DataContext="{Binding PcManager}" />
+        </TabItem>
+        <TabItem Header="{Localization CommonStrings.TabRedmine}">
+          <redmineControls:RedminePanel DataContext="{Binding Redmine}" />
+        </TabItem>
+      </TabControl>
     </Grid>
   </Border>
 </UserControl>

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.Api.Services;
+using Server.Application.Contracts;
 using Server.Application.DependencyInjection;
+using Server.Application.Redmine;
+using Server.Infrastructure.Configuration;
 using Server.Infrastructure.DependencyInjection;
 
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +29,20 @@ TaskScheduler.UnobservedTaskException += (_, eventArgs) =>
     eventArgs.SetObserved();
 };
 
+var dotEnvResult = DotEnvLoader.TryApplyRedmineFromFile(AppContext.BaseDirectory);
+if (dotEnvResult.Loaded)
+{
+    Log.Information(
+        "Файл .env загружен: {EnvPath}; применено переменных Redmine: {Count}",
+        dotEnvResult.FilePath,
+        dotEnvResult.AppliedRedmineKeys);
+}
+else
+{
+    Log.Information(
+        "Файл .env не найден — настройки Redmine берутся из appsettings и переменных окружения.");
+}
+
 var builder = WebApplication.CreateBuilder(args);
 if (TryGetPort(args, out var serverPort))
 {
@@ -40,7 +57,23 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddSingleton<NotificationInMemoryStore>();
+builder.Services.AddSingleton<INotificationBroadcaster, NotificationBroadcaster>();
+builder.Services.AddSingleton<RedmineEventStore>();
+builder.Services.AddSingleton<RedmineRuntimeStatus>();
+builder.Services.AddSingleton<IRedmineMonitoringSwitch, RedmineMonitoringSwitch>();
+builder.Services.AddSingleton<IRedmineIssueFetchLimit, RedmineIssueFetchLimit>();
+builder.Services.AddSingleton<IRedminePollRunner, RedminePollRunner>();
+builder.Services.AddSingleton<RedmineSeenStateSync>();
 builder.Services.AddHostedService<LanDiscoveryHostedService>();
+builder.Services.AddHostedService<RedminePollingHostedService>();
+
+builder.Services.AddSingleton<IRedmineSeenStateStore>(sp =>
+{
+    var options = sp.GetRequiredService<Server.Application.Redmine.RedmineOptions>();
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+    var path = options.ResolveStateFilePath(env.ContentRootPath);
+    return new Server.Infrastructure.Redmine.FileRedmineSeenStateStore(path);
+});
 
 builder.Services.AddRateLimiter(options =>
 {

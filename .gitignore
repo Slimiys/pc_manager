@@ -11,6 +11,7 @@
 # Secrets and local config
 .env
 .env.*
+!.env.example
 secrets/
 appsettings.*.local.json
 
@@ -18,6 +19,8 @@ appsettings.*.local.json
 *.log
 logs/
 *.tmp
+scripts/.start-server-and-agent.pids
+Server.Api/data/
 
 # OS artifacts
 Thumbs.db

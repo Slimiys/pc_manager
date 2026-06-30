@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LabelMonitoringStatus" xml:space="preserve">
+    <value>Monitoring status</value>
+  </data>
+  <data name="LabelEnableMonitoring" xml:space="preserve">
+    <value>Enable Redmine monitoring</value>
+  </data>
+  <data name="LabelLastEvent" xml:space="preserve">
+    <value>Last event</value>
+  </data>
+  <data name="LabelEventReceivedAt" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="LabelEventIssueId" xml:space="preserve">
+    <value>Issue #</value>
+  </data>
+  <data name="LabelEventVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="LabelEventProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="LabelEventSubject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="LabelEventDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="LabelEventStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="DetailNoLastEvent" xml:space="preserve">
+    <value>No events yet</value>
+  </data>
+  <data name="StatusChecking" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="StatusDisabled" xml:space="preserve">
+    <value>Disabled on server</value>
+  </data>
+  <data name="DetailMonitoringOff" xml:space="preserve">
+    <value>Monitoring is turned off</value>
+  </data>
+  <data name="DetailToggleFailed" xml:space="preserve">
+    <value>Failed to change monitoring state on the server</value>
+  </data>
+  <data name="DetailWaitingForPoll" xml:space="preserve">
+    <value>Waiting for the first poll...</value>
+  </data>
+  <data name="DetailServerUnavailable" xml:space="preserve">
+    <value>Cannot reach server API</value>
+  </data>
+  <data name="DetailTrackedIssuesFormat" xml:space="preserve">
+    <value>Tracked issues: {0}</value>
+  </data>
+  <data name="ButtonFetchLatestIssues" xml:space="preserve">
+    <value>Fetch latest issues</value>
+  </data>
+  <data name="LabelIssueFetchLimit" xml:space="preserve">
+    <value>Issue count</value>
+  </data>
+  <data name="LabelFetchingIssues" xml:space="preserve">
+    <value>Fetching issues…</value>
+  </data>
+  <data name="ColumnIssueId" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="ColumnDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ColumnSubject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+</root>

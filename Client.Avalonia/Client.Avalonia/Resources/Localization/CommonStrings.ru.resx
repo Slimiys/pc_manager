@@ -54,4 +54,16 @@
   <data name="AgentAvailabilityOffline" xml:space="preserve">
     <value>Недоступен</value>
   </data>
+  <data name="TabPcManager" xml:space="preserve">
+    <value>PC Manager</value>
+  </data>
+  <data name="TabRedmine" xml:space="preserve">
+    <value>Redmine</value>
+  </data>
+  <data name="TrayShowWindow" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Выход</value>
+  </data>
 </root>

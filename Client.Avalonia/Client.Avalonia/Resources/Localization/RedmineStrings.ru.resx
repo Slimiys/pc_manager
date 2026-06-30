@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LabelMonitoringStatus" xml:space="preserve">
+    <value>Статус мониторинга</value>
+  </data>
+  <data name="LabelEnableMonitoring" xml:space="preserve">
+    <value>Мониторинг Redmine</value>
+  </data>
+  <data name="LabelLastEvent" xml:space="preserve">
+    <value>Последнее событие</value>
+  </data>
+  <data name="LabelEventReceivedAt" xml:space="preserve">
+    <value>Время</value>
+  </data>
+  <data name="LabelEventIssueId" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="LabelEventVersion" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="LabelEventProject" xml:space="preserve">
+    <value>Проект</value>
+  </data>
+  <data name="LabelEventSubject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="LabelEventDate" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="LabelEventStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="DetailNoLastEvent" xml:space="preserve">
+    <value>Событий пока нет</value>
+  </data>
+  <data name="StatusChecking" xml:space="preserve">
+    <value>Проверка...</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>Подключено</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Нет связи</value>
+  </data>
+  <data name="StatusDisabled" xml:space="preserve">
+    <value>Отключено на сервере</value>
+  </data>
+  <data name="DetailMonitoringOff" xml:space="preserve">
+    <value>Мониторинг выключен</value>
+  </data>
+  <data name="DetailToggleFailed" xml:space="preserve">
+    <value>Не удалось изменить состояние мониторинга на сервере</value>
+  </data>
+  <data name="DetailWaitingForPoll" xml:space="preserve">
+    <value>Ожидание первого опроса...</value>
+  </data>
+  <data name="DetailServerUnavailable" xml:space="preserve">
+    <value>Не удаётся связаться с API сервера</value>
+  </data>
+  <data name="DetailTrackedIssuesFormat" xml:space="preserve">
+    <value>Отслеживается задач: {0}</value>
+  </data>
+  <data name="ButtonFetchLatestIssues" xml:space="preserve">
+    <value>Загрузить последние задачи</value>
+  </data>
+  <data name="LabelIssueFetchLimit" xml:space="preserve">
+    <value>Количество задач</value>
+  </data>
+  <data name="LabelFetchingIssues" xml:space="preserve">
+    <value>Получение задач…</value>
+  </data>
+  <data name="ColumnIssueId" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Приоритет</value>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="ColumnDate" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="ColumnSubject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+</root>

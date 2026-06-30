@@ -59,6 +59,8 @@ app.MapPost("/api/agent/execute", (HttpRequest request, ExecuteAgentCommandDto d
         CommandType.GetUptime => (DateTimeOffset.UtcNow - TimeSpan.FromMilliseconds(Environment.TickCount64)).ToString(),
         CommandType.LockWorkstation =>
             LockWorkstationAndReturnResult(workstationLocker),
+        CommandType.SetPowerPlanOffice or CommandType.SetPowerPlanGaming or CommandType.SetPowerPlanPerformance =>
+            ActivatePowerPlanForAgent(commandType),
         _ => throw new InvalidOperationException($"Unsupported command type: {commandType}")
     };
 
@@ -72,6 +74,16 @@ static string LockWorkstationAndReturnResult(Server.Application.Contracts.IWorks
 {
     workstationLocker.Lock();
     return "Workstation lock requested successfully.";
+}
+
+static string ActivatePowerPlanForAgent(CommandType commandType)
+{
+    if (!PowerPlanGuids.TryGetForCommand(commandType, out var schemeGuid))
+    {
+        throw new InvalidOperationException($"Тип команды не относится к схеме питания: {commandType}");
+    }
+
+    return WindowsPowerPlanActivator.Activate(schemeGuid);
 }
 
 static bool TryGetPort(string[] args, out int port)

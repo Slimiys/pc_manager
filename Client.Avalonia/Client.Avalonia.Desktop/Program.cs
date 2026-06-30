@@ -4,6 +4,8 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using Avalonia.Win32;
 using Avalonia.X11;
+using Client.Avalonia.Desktop.Services;
+using Client.Avalonia.Services;
 using Serilog;
 
 namespace Client.Avalonia.Desktop;
@@ -38,6 +40,9 @@ sealed class Program
 
         try
         {
+            ToastNotificationCompatBootstrap.TryInitialize();
+            ToastServiceFactory.Configure(static () => new WindowsSystemToastService());
+            MainWindowTraySupport.Register();
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
         catch (Exception exception)

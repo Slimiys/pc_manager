@@ -16,6 +16,9 @@ public sealed class UptimeActionPanelViewModel : ViewModelBase
     private ReactiveCommand<Unit, Unit>? _getUptimeCommand;
     private ReactiveCommand<Unit, Unit>? _lockWorkstationCommand;
     private ReactiveCommand<Unit, Unit>? _sendTestNotificationCommand;
+    private ReactiveCommand<Unit, Unit>? _setPowerPlanOfficeCommand;
+    private ReactiveCommand<Unit, Unit>? _setPowerPlanGamingCommand;
+    private ReactiveCommand<Unit, Unit>? _setPowerPlanPerformanceCommand;
 
     /// <summary>
     /// Создаёт панель действий.
@@ -85,6 +88,33 @@ public sealed class UptimeActionPanelViewModel : ViewModelBase
     {
         get => _sendTestNotificationCommand;
         set => this.RaiseAndSetIfChanged(ref _sendTestNotificationCommand, value);
+    }
+
+    /// <summary>
+    /// Команда установки схемы питания Office.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit>? SetPowerPlanOfficeCommand
+    {
+        get => _setPowerPlanOfficeCommand;
+        set => this.RaiseAndSetIfChanged(ref _setPowerPlanOfficeCommand, value);
+    }
+
+    /// <summary>
+    /// Команда установки схемы питания Gaming.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit>? SetPowerPlanGamingCommand
+    {
+        get => _setPowerPlanGamingCommand;
+        set => this.RaiseAndSetIfChanged(ref _setPowerPlanGamingCommand, value);
+    }
+
+    /// <summary>
+    /// Команда установки схемы питания Performance.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit>? SetPowerPlanPerformanceCommand
+    {
+        get => _setPowerPlanPerformanceCommand;
+        set => this.RaiseAndSetIfChanged(ref _setPowerPlanPerformanceCommand, value);
     }
 }
 

@@ -10,7 +10,7 @@ namespace Client.Avalonia.Localization;
 public sealed class LocalizationService : ILocalizationService
 {
     private const string ResourceNamespacePrefix = "Client.Avalonia.Resources.Localization.";
-    private static readonly string[] ResourceNames = ["CommonStrings", "CommandStrings", "HistoryStrings"];
+    private static readonly string[] ResourceNames = ["CommonStrings", "CommandStrings", "HistoryStrings", "RedmineStrings"];
 
     private readonly Dictionary<string, ResourceManager> _resourceManagers = new(StringComparer.Ordinal);
     private CultureInfo _currentCulture;

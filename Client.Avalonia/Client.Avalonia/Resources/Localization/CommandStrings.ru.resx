@@ -33,4 +33,22 @@
   <data name="CommandDisplay_SendTestNotification" xml:space="preserve">
     <value>Тест оповещения агента</value>
   </data>
+  <data name="ButtonPowerPlanOffice" xml:space="preserve">
+    <value>Питание: Office</value>
+  </data>
+  <data name="ButtonPowerPlanGaming" xml:space="preserve">
+    <value>Питание: Gaming</value>
+  </data>
+  <data name="ButtonPowerPlanPerformance" xml:space="preserve">
+    <value>Питание: Performance</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanOffice" xml:space="preserve">
+    <value>Схема питания Office</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanGaming" xml:space="preserve">
+    <value>Схема питания Gaming</value>
+  </data>
+  <data name="CommandDisplay_SetPowerPlanPerformance" xml:space="preserve">
+    <value>Схема питания Performance</value>
+  </data>
 </root>

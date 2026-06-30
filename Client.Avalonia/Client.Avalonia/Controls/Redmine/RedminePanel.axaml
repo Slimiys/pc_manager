@@ -1,0 +1,233 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Client.Avalonia.ViewModels"
+             xmlns:redmine="using:Client.Avalonia.Controls.Redmine"
+             x:Class="Client.Avalonia.Controls.Redmine.RedminePanel"
+             x:DataType="vm:RedmineTabViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450">
+  <StackPanel Spacing="12">
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+      <TextBlock Grid.Column="0"
+                 Classes="body"
+                 VerticalAlignment="Center"
+                 Text="{Localization RedmineStrings.LabelEnableMonitoring}" />
+      <ToggleSwitch Grid.Column="1"
+                    IsChecked="{Binding IsMonitoringEnabled, Mode=TwoWay}"
+                    IsEnabled="{Binding CanToggleMonitoring}" />
+    </Grid>
+    <TextBlock Classes="caption"
+               Text="{Localization RedmineStrings.LabelMonitoringStatus}" />
+    <TextBlock Classes="body"
+               Text="{Localization KeyBinding={Binding StatusKey}}" />
+    <TextBlock Classes="caption"
+               Text="{Binding StatusDetail}"
+               TextWrapping="Wrap" />
+    <StackPanel Spacing="8">
+      <TextBlock Classes="body"
+                 Text="{Localization RedmineStrings.LabelIssueFetchLimit}" />
+      <WrapPanel Orientation="Horizontal">
+        <NumericUpDown Minimum="1"
+                       Maximum="50"
+                       Value="{Binding IssueFetchLimit, Mode=TwoWay}"
+                       LostFocus="OnIssueFetchLimitLostFocus"
+                       MinWidth="112"
+                       FormatString="0"
+                       VerticalAlignment="Center"
+                       Margin="0,0,12,0" />
+        <Button Classes="primary-action"
+                Command="{Binding FetchLatestIssuesCommand}"
+                IsEnabled="{Binding CanFetchLatestIssues}"
+                Content="{Localization RedmineStrings.ButtonFetchLatestIssues}"
+                VerticalAlignment="Center" />
+      </WrapPanel>
+      <StackPanel Orientation="Horizontal"
+                  Spacing="8"
+                  IsVisible="{Binding IsFetchIssuesBusy}">
+        <ProgressBar IsIndeterminate="True"
+                     Width="96"
+                     Height="4"
+                     VerticalAlignment="Center" />
+        <TextBlock Classes="caption"
+                   VerticalAlignment="Center"
+                   Text="{Binding FetchingIssuesLabel}" />
+      </StackPanel>
+    </StackPanel>
+    <Border Classes="redmine-issues-grid-frame"
+            HorizontalAlignment="Stretch">
+      <DataGrid x:Name="IssuesDataGrid"
+                Classes="redmine-issues-grid"
+                ItemsSource="{Binding IssueRows}"
+                ColumnWidth="Auto"
+                AutoGenerateColumns="False"
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="True"
+                CanUserSortColumns="True"
+                GridLinesVisibility="All"
+                HeadersVisibility="Column"
+                IsReadOnly="True"
+                MinHeight="120"
+                MaxHeight="280"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch"
+                LoadingRow="OnIssuesLoadingRow"
+                UnloadingRow="OnIssuesUnloadingRow">
+        <DataGrid.Columns>
+        <DataGridTemplateColumn Header="{Localization RedmineStrings.ColumnIssueId}"
+                                SortMemberPath="Id">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding Id}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn SortMemberPath="StatusName">
+          <DataGridTemplateColumn.Header>
+            <redmine:RedmineFilterColumnHeader Title="{Localization RedmineStrings.ColumnStatus}"
+                                               Options="{Binding StatusFilterOptions}"
+                                               FilterSelectCommand="{Binding SelectStatusFilterCommand}"
+                                               IsFilterActive="{Binding IsStatusFilterActive}"
+                                               FlyoutOpening="OnFilterFlyoutOpening" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding StatusName}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn SortMemberPath="PriorityName">
+          <DataGridTemplateColumn.Header>
+            <redmine:RedmineFilterColumnHeader Title="{Localization RedmineStrings.ColumnPriority}"
+                                               Options="{Binding PriorityFilterOptions}"
+                                               FilterSelectCommand="{Binding SelectPriorityFilterCommand}"
+                                               IsFilterActive="{Binding IsPriorityFilterActive}"
+                                               FlyoutOpening="OnFilterFlyoutOpening" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding PriorityName}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn SortMemberPath="VersionName">
+          <DataGridTemplateColumn.Header>
+            <redmine:RedmineFilterColumnHeader Title="{Localization RedmineStrings.ColumnVersion}"
+                                               Options="{Binding VersionFilterOptions}"
+                                               FilterSelectCommand="{Binding SelectVersionFilterCommand}"
+                                               IsFilterActive="{Binding IsVersionFilterActive}"
+                                               FlyoutOpening="OnFilterFlyoutOpening" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding VersionName}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="{Localization RedmineStrings.ColumnDate}"
+                                SortMemberPath="CreatedOnUtc">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding DateDisplay}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="{Localization RedmineStrings.ColumnSubject}"
+                                Width="*"
+                                SortMemberPath="Subject">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate x:DataType="vm:RedmineIssueRowViewModel">
+              <TextBlock Text="{Binding Subject}"
+                         Classes="issue-cell-text" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+    <TextBlock Classes="caption"
+               Text="{Binding LastEventSectionTitle}" />
+    <Border Classes="redmine-issues-grid-frame"
+            IsVisible="{Binding HasLastEvent}"
+            HorizontalAlignment="Stretch">
+      <Grid Margin="12"
+            ColumnDefinitions="Auto,*"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+            RowSpacing="6"
+            ColumnSpacing="16">
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventReceivedAt}" />
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.ReceivedAtDisplay}"
+                   TextWrapping="Wrap" />
+        <TextBlock Grid.Row="1"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventIssueId}" />
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.IssueIdDisplay}" />
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventVersion}" />
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.VersionDisplay}"
+                   TextWrapping="Wrap" />
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventProject}" />
+        <TextBlock Grid.Row="3"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.ProjectDisplay}"
+                   TextWrapping="Wrap" />
+        <TextBlock Grid.Row="4"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventSubject}" />
+        <TextBlock Grid.Row="4"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.SubjectDisplay}"
+                   TextWrapping="Wrap" />
+        <TextBlock Grid.Row="5"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventDate}" />
+        <TextBlock Grid.Row="5"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.DateDisplay}" />
+        <TextBlock Grid.Row="6"
+                   Grid.Column="0"
+                   Classes="caption"
+                   Text="{Localization RedmineStrings.LabelEventStatus}" />
+        <TextBlock Grid.Row="6"
+                   Grid.Column="1"
+                   Classes="body"
+                   Text="{Binding LastEvent.StatusDisplay}"
+                   TextWrapping="Wrap" />
+      </Grid>
+    </Border>
+    <TextBlock Classes="caption"
+               IsVisible="{Binding ShowNoLastEvent}"
+               Text="{Binding NoLastEventDetail}" />
+  </StackPanel>
+</UserControl>

@@ -73,6 +73,30 @@ public sealed class CommandsApiClient
     }
 
     /// <summary>
+    /// Устанавливает схему питания Office (GUID как в telegram_shutdown_bot.py).
+    /// </summary>
+    public Task<string> ExecuteSetPowerPlanOfficeAsync(string token, CancellationToken cancellationToken)
+    {
+        return ExecuteCommandAsync(token, "SetPowerPlanOffice", cancellationToken);
+    }
+
+    /// <summary>
+    /// Устанавливает схему питания Gaming.
+    /// </summary>
+    public Task<string> ExecuteSetPowerPlanGamingAsync(string token, CancellationToken cancellationToken)
+    {
+        return ExecuteCommandAsync(token, "SetPowerPlanGaming", cancellationToken);
+    }
+
+    /// <summary>
+    /// Устанавливает схему питания Performance.
+    /// </summary>
+    public Task<string> ExecuteSetPowerPlanPerformanceAsync(string token, CancellationToken cancellationToken)
+    {
+        return ExecuteCommandAsync(token, "SetPowerPlanPerformance", cancellationToken);
+    }
+
+    /// <summary>
     /// Проверяет доступность агента по endpoint системной информации.
     /// </summary>
     /// <param name="token">JWT токен.</param>

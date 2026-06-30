@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Client.Avalonia.ViewModels"
+             xmlns:uptimeControls="using:Client.Avalonia.Controls.Uptime"
+             xmlns:historyControls="using:Client.Avalonia.Controls.History"
+             x:Class="Client.Avalonia.Views.PcManagerView"
+             x:DataType="vm:PcManagerTabViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450">
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="14">
+    <uptimeControls:UptimeActionPanel Grid.Row="0" DataContext="{Binding ActionPanel}" />
+    <uptimeControls:UptimeResultPanel Grid.Row="1" DataContext="{Binding ResultPanel}" />
+    <historyControls:RequestHistoryPanel Grid.Row="2" DataContext="{Binding HistoryPanel}" />
+  </Grid>
+</UserControl>

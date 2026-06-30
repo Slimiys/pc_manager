@@ -37,11 +37,13 @@ public partial class App : Application
         var authApiClient = new AuthApiClient(httpClient, apiSettings);
         var commandsApiClient = new CommandsApiClient(httpClient);
         var notificationsApiClient = new NotificationsApiClient(httpClient, apiSettings);
-        var toastService = new WindowToastService();
+        var redmineApiClient = new RedmineApiClient(httpClient);
+        var toastService = ToastServiceFactory.Create();
         var mainViewModel = new MainViewModel(
             authApiClient,
             commandsApiClient,
             notificationsApiClient,
+            redmineApiClient,
             tokenCache,
             localizationService,
             toastService);
@@ -50,10 +52,13 @@ public partial class App : Application
         {
             // Убираем дублирующую data-валидацию Avalonia-плагина.
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow(toastService)
+
+            var mainWindow = new MainWindow(toastService)
             {
                 DataContext = mainViewModel
             };
+            MainWindowTraySupportFactory.Create?.Invoke(mainWindow, localizationService, desktop);
+            desktop.MainWindow = mainWindow;
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
