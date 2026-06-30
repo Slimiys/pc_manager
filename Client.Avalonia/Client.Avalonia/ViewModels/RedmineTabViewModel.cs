@@ -349,6 +349,15 @@ public sealed class RedmineTabViewModel : ViewModelBase, IDisposable
             await _redmineApiClient
                 .SetIssueFetchLimitAsync((int)IssueFetchLimit, token, CancellationToken.None)
                 .ConfigureAwait(false);
+
+            if (enabled)
+            {
+                await ReloadMonitoredIssuesAsync(
+                    token,
+                    (int)IssueFetchLimit,
+                    seedBaseline: true).ConfigureAwait(false);
+            }
+
             var status = await _redmineApiClient
                 .SetEnabledAsync(enabled, token, CancellationToken.None)
                 .ConfigureAwait(false);
@@ -360,11 +369,6 @@ public sealed class RedmineTabViewModel : ViewModelBase, IDisposable
                     SyncIssueFetchLimit(status.IssueFetchLimit);
                     ApplyStatus(status);
                 }).ConfigureAwait(false);
-
-                if (status.Enabled)
-                {
-                    await ReloadMonitoredIssuesAsync(token, status.IssueFetchLimit).ConfigureAwait(false);
-                }
             }
         }
         catch
@@ -490,12 +494,17 @@ public sealed class RedmineTabViewModel : ViewModelBase, IDisposable
         _issueFetchLimitDebounceCts = null;
     }
 
-    private async Task ReloadMonitoredIssuesAsync(string token, int limit)
+    private async Task ReloadMonitoredIssuesAsync(string token, int limit, bool seedBaseline = false)
     {
         try
         {
             var issues = await _redmineApiClient
-                .GetLatestIssuesAsync(token, CancellationToken.None, limit, syncSeenState: true)
+                .GetLatestIssuesAsync(
+                    token,
+                    CancellationToken.None,
+                    limit,
+                    syncSeenState: !seedBaseline,
+                    seedBaseline: seedBaseline)
                 .ConfigureAwait(false);
 
             await RunOnUiThreadAsync(() =>

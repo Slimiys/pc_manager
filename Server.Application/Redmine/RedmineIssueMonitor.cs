@@ -39,14 +39,16 @@ public sealed class RedmineIssueMonitor
 
         foreach (var issue in issues)
         {
-            if (string.Equals(issue.StatusName, ResolvedStatusName, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
             var issueKey = issue.Id.ToString();
+            var isResolved = string.Equals(issue.StatusName, ResolvedStatusName, StringComparison.Ordinal);
+
             if (!updated.TryGetValue(issueKey, out var previousStatusId))
             {
+                if (isResolved)
+                {
+                    continue;
+                }
+
                 events.Add(CreateEvent(issue, RedmineIssueChangeKind.NewIssue, normalizedBaseUrl));
                 updated[issueKey] = issue.StatusId;
                 continue;

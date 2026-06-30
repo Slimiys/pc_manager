@@ -96,12 +96,14 @@ public sealed class RedmineApiClient
     /// Запрашивает последние задачи из Redmine через сервер.
     /// </summary>
     /// <param name="limit">Максимум записей; 0 — лимит с сервера.</param>
-    /// <param name="syncSeenState">Синхронизировать состояние мониторинга на сервере.</param>
+    /// <param name="syncSeenState">Добавить новые задачи выборки в состояние мониторинга.</param>
+    /// <param name="seedBaseline">Задать базовую линию мониторинга по выборке.</param>
     public async Task<IReadOnlyList<RedmineIssuePayload>> GetLatestIssuesAsync(
         string token,
         CancellationToken cancellationToken,
         int limit = 0,
-        bool syncSeenState = false)
+        bool syncSeenState = false,
+        bool seedBaseline = false)
     {
         var query = new List<string>();
         if (limit > 0)
@@ -112,6 +114,11 @@ public sealed class RedmineApiClient
         if (syncSeenState)
         {
             query.Add("syncSeenState=true");
+        }
+
+        if (seedBaseline)
+        {
+            query.Add("seedBaseline=true");
         }
 
         var queryString = query.Count > 0 ? $"?{string.Join('&', query)}" : string.Empty;

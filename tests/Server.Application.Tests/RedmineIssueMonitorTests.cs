@@ -43,6 +43,18 @@ public sealed class RedmineIssueMonitorTests
         Assert.That(result.UpdatedSeenState["103"], Is.EqualTo(2));
     }
 
+    [Test]
+    public void DetectChanges_StatusChangedToResolved_ReturnsStatusChangedEvent()
+    {
+        var issue = CreateIssue(104, 5, "Решена", "Done");
+        var seen = new Dictionary<string, int> { ["104"] = 2 };
+        var result = _monitor.DetectChanges([issue], seen, "https://redmine.example");
+
+        Assert.That(result.Events, Has.Count.EqualTo(1));
+        Assert.That(result.Events[0].Kind, Is.EqualTo(RedmineIssueChangeKind.StatusChanged));
+        Assert.That(result.UpdatedSeenState["104"], Is.EqualTo(5));
+    }
+
     private static RedmineIssue CreateIssue(int id, int statusId, string statusName, string subject) =>
         new()
         {

@@ -94,19 +94,26 @@ public sealed class RedmineController : ControllerBase
     /// Запрашивает последние задачи из Redmine (для проверки подключения и отображения).
     /// </summary>
     /// <param name="limit">Максимум записей (1–50).</param>
-    /// <param name="syncSeenState">Обновить сохранённое состояние мониторинга по выборке.</param>
+    /// <param name="syncSeenState">Добавить новые задачи из выборки в состояние мониторинга.</param>
+    /// <param name="seedBaseline">Задать базовую линию мониторинга по выборке (при включении).</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     [HttpGet("issues")]
     public async Task<ActionResult<IReadOnlyList<RedmineIssueDto>>> GetLatestIssuesAsync(
         [FromQuery] int limit,
         [FromQuery] bool syncSeenState,
+        [FromQuery] bool seedBaseline,
         CancellationToken cancellationToken)
     {
         var fetchLimit = Math.Clamp(limit <= 0 ? _issueFetchLimit.Value : limit, 1, 50);
         try
         {
             var issues = await _redmineApiClient.FetchAssignedIssuesAsync(fetchLimit, cancellationToken);
-            if (syncSeenState && _monitoringSwitch.IsEnabled)
+            if (seedBaseline)
+            {
+                await _seenStateSync.SeedBaselineAsync(issues, cancellationToken);
+                _runtimeStatus.UpdatePollResult(true, null, issues.Count);
+            }
+            else if (syncSeenState && _monitoringSwitch.IsEnabled)
             {
                 await _seenStateSync.MergeAndSaveFetchedIssuesAsync(issues, cancellationToken);
                 _runtimeStatus.UpdatePollResult(true, null, issues.Count);

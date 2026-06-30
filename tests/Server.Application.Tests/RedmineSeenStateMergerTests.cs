@@ -8,7 +8,7 @@ namespace Server.Application.Tests;
 public sealed class RedmineSeenStateMergerTests
 {
     [Test]
-    public void MergeFetchedIssues_AddsNewIssuesAndUpdatesExisting()
+    public void MergeFetchedIssues_AddsNewIssuesWithoutUpdatingExisting()
     {
         var seen = new Dictionary<string, int> { ["1"] = 10 };
         var issues = new[]
@@ -20,7 +20,7 @@ public sealed class RedmineSeenStateMergerTests
         var merged = RedmineSeenStateMerger.MergeFetchedIssues(seen, issues);
 
         Assert.That(merged, Has.Count.EqualTo(2));
-        Assert.That(merged["1"], Is.EqualTo(20));
+        Assert.That(merged["1"], Is.EqualTo(10));
         Assert.That(merged["2"], Is.EqualTo(30));
     }
 
@@ -35,6 +35,24 @@ public sealed class RedmineSeenStateMergerTests
         Assert.That(merged, Has.Count.EqualTo(1));
         Assert.That(merged, Does.ContainKey("1"));
         Assert.That(merged, Does.Not.ContainKey("2"));
+    }
+
+    [Test]
+    public void SeedBaselineFromFetchedIssues_ReplacesStateWithCurrentStatuses()
+    {
+        var seen = new Dictionary<string, int> { ["1"] = 10, ["99"] = 5 };
+        var issues = new[]
+        {
+            CreateIssue(1, statusId: 20),
+            CreateIssue(2, statusId: 30)
+        };
+
+        var baseline = RedmineSeenStateMerger.SeedBaselineFromFetchedIssues(issues);
+
+        Assert.That(baseline, Has.Count.EqualTo(2));
+        Assert.That(baseline["1"], Is.EqualTo(20));
+        Assert.That(baseline["2"], Is.EqualTo(30));
+        Assert.That(baseline, Does.Not.ContainKey("99"));
     }
 
     private static RedmineIssue CreateIssue(int id, int statusId = 1, string statusName = "Новая") =>
